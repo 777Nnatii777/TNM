@@ -10,4 +10,8 @@
     <Folder Include="Controllers\Nowy folder\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Domain\Domain.csproj" />
+  </ItemGroup>
+
 </Project>
