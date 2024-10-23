@@ -1,0 +1,20 @@
+﻿@model List<TNM.Models.Movie>
+
+@{
+    ViewData["Title"] = "Movie List"; 
+}
+
+<h2>Movie List</h2>
+
+
+    <ul>
+        @foreach (var movie in Model)
+        {
+            <li>
+                <strong>Title:</strong> @movie.Title <br />
+                <strong>Director:</strong> @movie.Director <br />
+                <strong>Year:</strong> @movie.Year
+            </li>
+        }
+    </ul>
+

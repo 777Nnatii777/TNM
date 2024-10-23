@@ -13,22 +13,16 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <div class="container-fluid d-flex justify-content-between align-items-center">
-
-                
                 <a class="navbar-brand ps-4 pe-4" href="#" style="margin-right: auto;">
                     <img src="~/images/user.png" alt="User Icon" style="width: 40px; height: 40px; border-radius: 50%;">
                 </a>
-               
-                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-               
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav d-flex justify-content-between">
                         <li class="nav-item me-md-4 mb-4 mt-4 pe-md-4">
-                            <a class="nav-link btn btn-outline-primary mx-2 text-center" href="#">MyTests</a>
+                            <a class="nav-link btn btn-outline-primary mx-2 text-center" href="@Url.Action("Index", "Home")">MyTests</a>
                         </li>
                         <li class="nav-item me-md-4 mb-4 mt-4 pe-md-4">
                             <a class="nav-link btn btn-outline-primary mx-2 text-center" href="#">CreateTest</a>
@@ -37,17 +31,13 @@
                             <a class="nav-link btn btn-outline-primary mx-2 text-center" href="#">Account</a>
                         </li>
                         <li class="nav-item me-md-4 mb-4 mt-4 pe-md-4 mte-4-small-nm">
-                            <a class="nav-link btn btn-outline-primary mx-2 text-center" href="#">Settings</a>
+                            <a class="nav-link btn btn-outline-primary mx-2 text-center" href="@Url.Action("List", "Movies")">Testy</a>
                         </li>
                     </ul>
                 </div>
-
-
                 <div class="me-4"></div>
             </div>
         </nav>
-
-
     </header>
 
 
