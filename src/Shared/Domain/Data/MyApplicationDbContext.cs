@@ -11,6 +11,8 @@ public class MyApplicationDbContext : DbContext
     public DbSet<Answer> Answers { get; set; }
     public DbSet<Result> Results { get; set; }
 
+    public DbSet<TestAssignment> TestAssignments { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
@@ -33,6 +35,9 @@ public class MyApplicationDbContext : DbContext
             .HasOne(r => r.Test)
             .WithMany()
             .HasForeignKey(r => r.TestId);
+
+        modelBuilder.Entity<TestAssignment>()
+        .HasKey(ta => ta.AssignmentId);
 
         base.OnModelCreating(modelBuilder);
     }

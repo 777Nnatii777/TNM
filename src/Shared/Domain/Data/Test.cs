@@ -15,6 +15,7 @@ namespace Domain.Data
         public int UserId { get; set; }  
         public User Creator { get; set; }  
 
-        public List<Question> Questions { get; set; } = new List<Question>();  
+        public List<Question> Questions { get; set; } = new List<Question>();
+        public string Status { get; set; } 
     }
 }
