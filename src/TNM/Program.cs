@@ -25,8 +25,9 @@ Console.WriteLine($"Database: {dbPassword}");
 var connectionString = $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};Connection Timeout=10;";
 
 
-builder.Services.AddDbContext<MyApplicationDbContext>(options =>
-    options.UseMySql(
+builder.Services.AddDbContext<MyApplicationDbContext>(options => options
+    
+    .UseMySql(
         connectionString,
         new MySqlServerVersion(new Version(10, 11, 6)),
         mySqlOptions => mySqlOptions

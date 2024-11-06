@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Data; 
-using System.Linq;
-using System.Threading.Tasks;
+
 
 public class MyTestsController : Controller
-{
+{ 
     private readonly MyApplicationDbContext _context;
 
     public MyTestsController(MyApplicationDbContext context)
