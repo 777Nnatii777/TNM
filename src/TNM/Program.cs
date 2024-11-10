@@ -38,7 +38,7 @@ builder.Services.AddDbContext<MyApplicationDbContext>(options => options
         connectionString,
         new MySqlServerVersion(new Version(10, 11, 6)),
         mySqlOptions => mySqlOptions
-            .MigrationsAssembly("TNM") // Wskazanie ze musi do NTM migorwac bo inaczej migruje i nie dzia³a
+            .MigrationsAssembly("TNM") 
             .EnableRetryOnFailure(
                 maxRetryCount: 5, 
                 maxRetryDelay: TimeSpan.FromSeconds(10),
@@ -47,8 +47,8 @@ builder.Services.AddDbContext<MyApplicationDbContext>(options => options
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account"; // Ustawienie œcie¿ki logowania
-    options.AccessDeniedPath = "/Account/AccessDenied"; // Opcjonalnie, œcie¿ka w razie braku dostêpu
+    options.LoginPath = "/Account"; 
+    options.AccessDeniedPath = "/Account/AccessDenied"; 
 });
 
 
