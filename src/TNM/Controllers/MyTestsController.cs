@@ -17,16 +17,16 @@ public class MyTestsController : Controller
        
         var myTests = await _context.TestAssignments
             .Include(ta => ta.Test)
-            .Where(ta => ta.UserId == 1 && ta.Status == "New") 
+            .Where(ta => ta.UserId == 1 && ta.AssignmentStatus == "New") 
             .ToListAsync();
 
         var doneTests = await _context.TestAssignments
             .Include(ta => ta.Test)
-            .Where(ta => ta.UserId == 2 && ta.Status == "Done") 
+            .Where(ta => ta.UserId == 2 && ta.AssignmentStatus == "Done") 
             .ToListAsync();
 
         var newTests = await _context.Tests
-            .Where(t => t.Status == "New")
+            .Where(t => t.TestStatus == "New")
             .ToListAsync();
 
         

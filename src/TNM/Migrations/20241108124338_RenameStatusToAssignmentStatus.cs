@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TNM.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTestAssignments : Migration
+    public partial class RenameStatusToAssignmentStatus : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Status",
+                name: "TestStatus",
                 table: "Tests",
                 type: "longtext",
                 nullable: false)
@@ -27,7 +27,7 @@ namespace TNM.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     TestId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "longtext", nullable: false)
+                    AssignmentStatus = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssignedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -67,7 +67,7 @@ namespace TNM.Migrations
                 name: "TestAssignments");
 
             migrationBuilder.DropColumn(
-                name: "Status",
+                name: "TestStatus",
                 table: "Tests");
         }
     }

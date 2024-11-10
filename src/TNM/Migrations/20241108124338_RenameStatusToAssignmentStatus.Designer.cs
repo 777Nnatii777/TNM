@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TNM.Migrations
 {
     [DbContext(typeof(MyApplicationDbContext))]
-    [Migration("20241105204801_AddTestAssignments")]
-    partial class AddTestAssignments
+    [Migration("20241108124338_RenameStatusToAssignmentStatus")]
+    partial class RenameStatusToAssignmentStatus
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,7 +119,7 @@ namespace TNM.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("TestStatus")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -148,7 +148,7 @@ namespace TNM.Migrations
                     b.Property<DateTime>("AssignedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("AssignmentStatus")
                         .IsRequired()
                         .HasColumnType("longtext");
 

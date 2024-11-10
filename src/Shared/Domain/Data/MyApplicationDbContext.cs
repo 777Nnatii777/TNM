@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Domain.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-public class MyApplicationDbContext : DbContext
+public class MyApplicationDbContext : IdentityDbContext
 {
     public MyApplicationDbContext(DbContextOptions<MyApplicationDbContext> options) : base(options) { }
 

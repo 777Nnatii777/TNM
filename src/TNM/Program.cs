@@ -1,11 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Domain.Data; 
+using Domain.Data;
+using Microsoft.AspNetCore.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+builder.Services.AddDefaultIdentity<IdentityUser>()
+	.AddEntityFrameworkStores<MyApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
+
+
 
 
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
@@ -48,6 +55,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+app.UseAuthentication(); 
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
