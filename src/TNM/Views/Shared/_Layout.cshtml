@@ -13,16 +13,30 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <div class="container-fluid d-flex justify-content-between align-items-center">
-                <a class="navbar-brand ps-4 pe-4" href="#" style="margin-right: auto;">
-                    <img src="~/images/user.png" alt="User Icon" style="width: 40px; height: 40px; border-radius: 50%;">
-                </a>
+                @using Microsoft.AspNetCore.Identity
+                @inject SignInManager<IdentityUser> SignInManager
+                @inject UserManager<IdentityUser> UserManager
+
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div class="navbar-text ps-4 pe-4" style="margin-right: auto;">
+                        Welcome, @UserManager.GetUserName(User)!
+                    </div>
+                }
+                else
+                {
+                    <a class="navbar-brand ps-4 pe-4" href="#" style="margin-right: auto;">
+                        <img src="~/images/user.png" alt="User Icon" style="width: 40px; height: 40px; border-radius: 50%;">
+                    </a>
+                }
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav d-flex justify-content-between">
                         <li class="nav-item me-md-4 mb-4 mt-4 pe-md-4">
-                        <a class="nav-link btn btn-outline-primary mx-2 text-center" href="@Url.Action("Index", "MyTests")">MyTests</a>
+                            <a class="nav-link btn btn-outline-primary mx-2 text-center" href="@Url.Action("Index", "MyTests")">MyTests</a>
                         </li>
                         <li class="nav-item me-md-4 mb-4 mt-4 pe-md-4">
                             <a class="nav-link btn btn-outline-primary mx-2 text-center" href="@Url.Action("Index", "CreateTest")">CreateTest</a>
@@ -39,7 +53,6 @@
             </div>
         </nav>
     </header>
-
 
     <div class="container">
         <main role="main" class="pb-3">

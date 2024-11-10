@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Domain.Data
+
+@{
     ViewData["Title"] = "My Tests";
     var myTests = ViewBag.MyTests as List<Domain.Data.TestAssignment>;
     var doneTests = ViewBag.DoneTests as List<Domain.Data.TestAssignment>;
@@ -8,57 +10,72 @@
 <div class="container mt-5">
     <h2 class="mb-4">Moje Testy</h2>
 
-    
-    <div class="d-flex justify-content-around mb-4">
-        <button class="btn btn-outline-primary btn-lg" onclick="showMyTests()">My Test</button>
-        <button class="btn btn-outline-success btn-lg" onclick="showDoneTests()">Done Tests</button>
-        <button class="btn btn-outline-info btn-lg" onclick="showNewTest()">New Test</button>
-    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Główna zawartość dla zalogowanego użytkownika -->
+        <div class="d-flex justify-content-around mb-4">
+            <button class="btn btn-outline-primary btn-lg" onclick="showMyTests()">My Test</button>
+            <button class="btn btn-outline-success btn-lg" onclick="showDoneTests()">Done Tests</button>
+            <button class="btn btn-outline-info btn-lg" onclick="showNewTest()">New Test</button>
+        </div>
 
- 
-    <div id="testContent" class="mt-4">
-        <p class="text-muted text-center">Wybierz przycisk, aby zobaczyć odpowiednie informacje o testach.</p>
-    </div>
+        <div id="testContent" class="mt-4">
+            <p class="text-muted text-center">Wybierz przycisk, aby zobaczyć odpowiednie informacje o testach.</p>
+        </div>
+    }
+    else
+    {
+        <!-- Wiadomość dla niezalogowanego użytkownika -->
+        <div class="text-center mt-5">
+            <h4>Musisz być zalogowany, aby zobaczyć swoje testy</h4>
+            <p class="lead">Proszę zalogować się lub zarejestrować, aby uzyskać dostęp do tej strony.</p>
+            <a href="/Account/Login" class="btn btn-primary">Zaloguj się</a>
+            <a href="/Account/Register" class="btn btn-secondary">Zarejestruj się</a>
+        </div>
+    }
 </div>
 
+<!-- Skrypty JavaScript dla zalogowanego użytkownika -->
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        function showMyTests() {
+            let content = "<h4 class='text-center'>Twoje testy:</h4>";
+            content += "<ul class='list-group'>";
+        @foreach (var test in myTests)
+        {
+            <text>
+                        content += `<li class='list-group-item'>@test.Test.Title</li>`;
+            </text>
+        }
+                content += "</ul>";
+            document.getElementById("testContent").innerHTML = content;
+        }
 
-<script>
-    function showMyTests() {
-        let content = "<h4 class='text-center'>Twoje testy:</h4>";
-        content += "<ul class='list-group'>";
-    @foreach (var test in myTests)
-    {
-        <text>
-                    content += `<li class='list-group-item'>@test.Test.Title</li>`;
-        </text>
-    }
-            content += "</ul>";
-        document.getElementById("testContent").innerHTML = content;
-    }
+        function showDoneTests() {
+            let content = "<h4 class='text-center'>Ukończone testy:</h4>";
+            content += "<ul class='list-group'>";
+        @foreach (var test in doneTests)
+        {
+            <text>
+                        content += `<li class='list-group-item'>@test.Test.Title</li>`;
+            </text>
+        }
+                content += "</ul>";
+            document.getElementById("testContent").innerHTML = content;
+        }
 
-    function showDoneTests() {
-        let content = "<h4 class='text-center'>Ukończone testy:</h4>";
-        content += "<ul class='list-group'>";
-    @foreach (var test in doneTests)
-    {
-        <text>
-                    content += `<li class='list-group-item'>@test.Test.Title</li>`;
-        </text>
-    }
-            content += "</ul>";
-        document.getElementById("testContent").innerHTML = content;
-    }
-
-    function showNewTest() {
-        let content = "<h4 class='text-center'>Nowe testy:</h4>";
-        content += "<ul class='list-group'>";
-    @foreach (var test in newTests)
-    {
-        <text>
-                    content += `<li class='list-group-item'>@test.Title</li>`;
-        </text>
-    }
-            content += "</ul>";
-        document.getElementById("testContent").innerHTML = content;
-    }
-</script>
+        function showNewTest() {
+            let content = "<h4 class='text-center'>Nowe testy:</h4>";
+            content += "<ul class='list-group'>";
+        @foreach (var test in newTests)
+        {
+            <text>
+                        content += `<li class='list-group-item'>@test.Title</li>`;
+            </text>
+        }
+                content += "</ul>";
+            document.getElementById("testContent").innerHTML = content;
+        }
+    </script>
+}

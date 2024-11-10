@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Domain.Data; 
+using System.Security.Claims;
 
-
+[Authorize]
 public class MyTestsController : Controller
-{ 
+{
     private readonly MyApplicationDbContext _context;
 
     public MyTestsController(MyApplicationDbContext context)
@@ -14,22 +16,22 @@ public class MyTestsController : Controller
 
     public async Task<IActionResult> Index()
     {
-       
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var myTests = await _context.TestAssignments
             .Include(ta => ta.Test)
-            .Where(ta => ta.UserId == 1 && ta.AssignmentStatus == "New") 
+            .Where(ta => ta.UserId == userId && ta.AssignmentStatus == "New")
             .ToListAsync();
 
         var doneTests = await _context.TestAssignments
             .Include(ta => ta.Test)
-            .Where(ta => ta.UserId == 2 && ta.AssignmentStatus == "Done") 
+            .Where(ta => ta.UserId == userId && ta.AssignmentStatus == "Done")
             .ToListAsync();
 
         var newTests = await _context.Tests
-            .Where(t => t.TestStatus == "New")
+            .Where(t => t.UserId == userId && t.TestStatus == "New")
             .ToListAsync();
 
-        
         ViewBag.MyTests = myTests;
         ViewBag.DoneTests = doneTests;
         ViewBag.NewTests = newTests;
@@ -37,4 +39,3 @@ public class MyTestsController : Controller
         return View();
     }
 }
-

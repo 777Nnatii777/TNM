@@ -3,78 +3,82 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 public class AccountController : Controller
-
 {
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
 
+    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
+
+    
     public IActionResult Index()
     {
         return View();
     }
 
+    
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
 
+    
+    [HttpPost]
+    public async Task<IActionResult> Register(string username, string password)
+    {
+        if (!ModelState.IsValid) 
+        {
+            return View();
+        }
 
-    private readonly UserManager<IdentityUser> _userManager;
-	private readonly SignInManager<IdentityUser> _signInManager;
+        var user = new IdentityUser { UserName = username };
+        var result = await _userManager.CreateAsync(user, password);
 
-	public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
-	{
-		_userManager = userManager;
-		_signInManager = signInManager;
-	}
+        if (result.Succeeded)
+        {
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Home");
+        }
 
-	
-	[HttpGet]
-	public IActionResult Register()
-	{
-		return View();
-	}
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
 
-	[HttpPost]
-	public async Task<IActionResult> Register(string username, string password)
-	{
-		var user = new IdentityUser { UserName = username };
-		var result = await _userManager.CreateAsync(user, password);
+        return View();
+    }
 
-		if (result.Succeeded)
-		{
-			await _signInManager.SignInAsync(user, isPersistent: false);
-			return RedirectToAction("Index", "Home");
-		}
+    
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
+    }
 
-		foreach (var error in result.Errors)
-		{
-			ModelState.AddModelError(string.Empty, error.Description);
-		}
+    
+    [HttpPost]
+    public async Task<IActionResult> Login(string username, string password)
+    {
+        var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: false, lockoutOnFailure: false);
 
-		return View();
-	}
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index", "Home");
+        }
 
-	
-	[HttpGet]
-	public IActionResult Login()
-	{
-		return View();
-	}
+        ModelState.AddModelError(string.Empty, "Nieprawidłowe dane logowania.");
+        return View();
+    }
 
-	[HttpPost]
-	public async Task<IActionResult> Login(string username, string password)
-	{
-		var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: false, lockoutOnFailure: false);
-
-		if (result.Succeeded)
-		{
-			return RedirectToAction("Index", "Home");
-		}
-
-		ModelState.AddModelError(string.Empty, "Nieprawidłowe dane logowania.");
-		return View();
-	}
-
-	
-	[HttpPost]
-	public async Task<IActionResult> Logout()
-	{
-		await _signInManager.SignOutAsync();
-		return RedirectToAction("Index", "Home");
-	}
+    
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
+    }
 }

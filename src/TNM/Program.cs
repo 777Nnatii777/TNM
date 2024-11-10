@@ -45,6 +45,12 @@ builder.Services.AddDbContext<MyApplicationDbContext>(options => options
                 errorNumbersToAdd: null)
     ));
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account"; // Ustawienie œcie¿ki logowania
+    options.AccessDeniedPath = "/Account/AccessDenied"; // Opcjonalnie, œcie¿ka w razie braku dostêpu
+});
+
 
 var app = builder.Build();
 
