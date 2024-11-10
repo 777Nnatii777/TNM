@@ -1,45 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Domain.Data;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
-public class MyApplicationDbContext : IdentityDbContext
+﻿namespace Domain.Data
 {
-    public MyApplicationDbContext(DbContextOptions<MyApplicationDbContext> options) : base(options) { }
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<Test> Tests { get; set; }
-    public DbSet<Question> Questions { get; set; }
-    public DbSet<Answer> Answers { get; set; }
-    public DbSet<Result> Results { get; set; }
-
-    public DbSet<TestAssignment> TestAssignments { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public class MyApplicationDbContext : IdentityDbContext
     {
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Tests)
-            .WithOne(t => t.Creator)
-            .HasForeignKey(t => t.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        public MyApplicationDbContext(DbContextOptions<MyApplicationDbContext> options)
+            : base(options) { }
 
-        modelBuilder.Entity<Question>()
-            .HasMany(q => q.Answers)
-            .WithOne(a => a.Question)
-            .HasForeignKey(a => a.QuestionId);
+        
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<TestAssignment> TestAssignments { get; set; }
 
-        modelBuilder.Entity<Result>()
-            .HasOne(r => r.User)
-            .WithMany(u => u.Results)
-            .HasForeignKey(r => r.UserId);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Result>()
-            .HasOne(r => r.Test)
-            .WithMany()
-            .HasForeignKey(r => r.TestId);
+            
+            modelBuilder.Entity<TestAssignment>()
+                .HasKey(ta => ta.AssignmentId);
 
-        modelBuilder.Entity<TestAssignment>()
-        .HasKey(ta => ta.AssignmentId);
+            
+            modelBuilder.Entity<Test>()
+                .HasOne(t => t.Creator) 
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-        base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<TestAssignment>()
+                .HasOne(ta => ta.User) 
+                .WithMany()
+                .HasForeignKey(ta => ta.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
