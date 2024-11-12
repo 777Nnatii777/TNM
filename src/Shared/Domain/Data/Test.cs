@@ -9,7 +9,7 @@ namespace Domain.Data
         public string Title { get; set; }
         public string AccessCode { get; set; }
         public string UserId { get; set; }
-        public IdentityUser Creator { get; set; }
+        
         public DateTime CreatedAt { get; set; }
         public string TestStatus { get; set; }
         public List<TestAssignment> Assignments { get; set; } = new List<TestAssignment>();

@@ -1,5 +1,6 @@
 ﻿namespace Domain.Data
 {
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +23,7 @@
 
             
             modelBuilder.Entity<Test>()
-                .HasOne(t => t.Creator) 
+                .HasOne<IdentityUser>()
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
