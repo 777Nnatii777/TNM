@@ -13,6 +13,9 @@ namespace Domain.Data
         public DateTime CreatedAt { get; set; }
         public string TestStatus { get; set; }
         public List<TestAssignment> Assignments { get; set; } = new List<TestAssignment>();
+
+        public List<Question> Questions { get; set; } = new List<Question>();
     }
+
 }
 
