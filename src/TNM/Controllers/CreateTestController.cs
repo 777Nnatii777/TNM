@@ -25,7 +25,7 @@ namespace TNM.Controllers
 
         private async Task<string> GenerateAccessCode()
         {
-            string accessCode = await GenerateAccessCode();
+            string accessCode;
 
             do
             {
@@ -53,15 +53,28 @@ namespace TNM.Controllers
             return View("Index");
         }
 
-
+        private string test;
         [HttpPost]
         public async Task<IActionResult> CreateTest(string testname, string testdescription)
+
         {
             if (!ModelState.IsValid)
             {
+                var modelStateErrors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                test = string.Join("; ", modelStateErrors);
                 return View("Index");
             }
+
+
             var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+
+            if (string.IsNullOrEmpty(userID))
+            {
+                Console.WriteLine("UserID is null or empty.");
+            }
+            
 
             var accessCode = await GenerateAccessCode();
 
@@ -77,17 +90,18 @@ namespace TNM.Controllers
                
 
             };
+            Console.WriteLine($"Title: {testname}, Description: {testdescription}");
 
             try
             {
                 _dbContext.Tests.Add(newTest);
                 var result = await _dbContext.SaveChangesAsync();
-                Console.WriteLine($"Number of rows affected: {result}");
+                Console.WriteLine($"Rows affected: {result}");
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
+                Console.WriteLine($"Error during SaveChanges: {ex.Message}");
             }
 
 
