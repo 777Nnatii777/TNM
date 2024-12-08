@@ -13,8 +13,10 @@
 }
 else
 {
-    <p>Nie jesteś zalogowany.</p>
-    <a asp-action="Login" class="btn btn-primary">Zaloguj się</a>
-    <br />
-    <a asp-action="Register" class="btn btn-secondary">Zarejestruj się</a>
+    <div class="text-center mt-5">
+        <h4>Musisz być zalogowany, aby dodawać testy</h4>
+        <p class="lead">Proszę zalogować się lub zarejestrować, aby uzyskać dostęp do tej strony.</p>
+        <a href="/Account/Login" class="btn btn-primary">Zaloguj się</a>
+        <a href="/Account/Register" class="btn btn-secondary">Zarejestruj się</a>
+    </div>
 }
