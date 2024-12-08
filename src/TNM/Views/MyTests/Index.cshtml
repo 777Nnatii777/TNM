@@ -7,7 +7,8 @@
     var newTests = ViewBag.NewTests as List<Domain.Data.Test>;
 }
 
-<div class="container mt-5">
+<div class="container mt-4">
+
     <h2 class="mb-4">Moje Testy</h2>
 
     @if (User.Identity.IsAuthenticated)
@@ -25,9 +26,9 @@
     }
     else
     {
-       
+
         <div class="text-center mt-5">
-            <h4>Musisz być zalogowany, aby zobaczyć swoje testy</h4>
+            <h4>Musisz być zalogowany, aby dodawać testy</h4>
             <p class="lead">Proszę zalogować się lub zarejestrować, aby uzyskać dostęp do tej strony.</p>
             <a href="/Account/Login" class="btn btn-primary">Zaloguj się</a>
             <a href="/Account/Register" class="btn btn-secondary">Zarejestruj się</a>
