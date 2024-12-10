@@ -3,9 +3,9 @@
 }
 
 
-    <div class="container mt-4">
+<div class="container mt-4">
 
-        <h2 class="mb-4">Create Test</h2>
+    <h2 class="mb-4">Create Test</h2>
 
     @if (User.Identity.IsAuthenticated)
     {
@@ -29,10 +29,12 @@
                 <button type="submit" class="btn btn-success">Zapisz Test</button>
             </div>
 
+            <div id="questionContainer" class="mt-4"></div>   <!--To tak musi być żeby do pay load ASP przekazywalo mi dynamicznie generowany formularz, nie pytaj javascript  -->
+
+
         </form>
 
-        <div id="questionContainer" class="mt-4">
-        </div>
+
     }
     else
     {
@@ -44,58 +46,58 @@
         </div>
     }
 
-    </div>
+</div>
 
-    <script>
+<script>
     document.getElementById("addQuestionButton").addEventListener("click", function () {
         const questionContainer = document.getElementById("questionContainer");
 
-        const questionIndex = questionContainer.children.length; 
+        const questionIndex = questionContainer.children.length;
 
-        
+
         const questionDiv = document.createElement("div");
-        questionDiv.classList.add("mb-4", "border", "p-3"); 
+        questionDiv.classList.add("mb-4", "border", "p-3");
         questionDiv.innerHTML = `
-                <h5>Pytanie ${questionIndex + 1}</h5>
-                <div class="mb-3">
-                    <label for="questions_${questionIndex}_Text" class="form-label">Tytuł pytania:</label>
-                    <input type="text" class="form-control" id="questions_${questionIndex}_Text" name="questions[${questionIndex}].Text" required>
-                </div>
-                <div class="mb-3">
-                    <label for="questions_${questionIndex}_Type" class="form-label">Typ pytania:</label>
-                    <select class="form-select" id="questions_${questionIndex}_Type" name="questions[${questionIndex}].Type" required>
-                        <option value="SingleChoice">Jednokrotny wybór</option>
-                        <option value="MultipleChoice">Wielokrotny wybór</option>
-                        <option value="TrueFalse">Prawda/Fałsz</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-secondary addAnswerButton">Dodaj odpowiedź</button>
-                </div>
-                <div class="answerContainer"></div>
-            `;
+                    <h5>Pytanie ${questionIndex + 1}</h5>
+                    <div class="mb-3">
+                        <label for="questions_${questionIndex}_Text" class="form-label">Tytuł pytania:</label>
+                            <input type="text" class="form-control" id="questions_${questionIndex}_Text" name="questions[${questionIndex}].QuestionTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="questions_${questionIndex}_Type" class="form-label">Typ pytania:</label>
+                        <select class="form-select" id="questions_${questionIndex}_Type" name="questions[${questionIndex}].Type" required>
+                            <option value="SingleChoice">Jednokrotny wybór</option>
+                            <option value="MultipleChoice">Wielokrotny wybór</option>
+                            <option value="TrueFalse">Prawda/Fałsz</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-sm btn-outline-secondary addAnswerButton">Dodaj odpowiedź</button>
+                    </div>
+                    <div class="answerContainer"></div>
+                `;
 
-        
+
         questionContainer.appendChild(questionDiv);
 
-        
+
         const addAnswerButton = questionDiv.querySelector(".addAnswerButton");
         addAnswerButton.addEventListener("click", function () {
             const answerContainer = questionDiv.querySelector(".answerContainer");
-            const answerIndex = answerContainer.children.length; 
+            const answerIndex = answerContainer.children.length;
 
             const answerDiv = document.createElement("div");
             answerDiv.classList.add("d-flex", "align-items-center", "gap-2", "mb-2");
             answerDiv.innerHTML = `
-                    <input type="text" class="form-control" placeholder="Odpowiedź" name="questions[${questionIndex}].Answers[${answerIndex}].Text" required>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="questions[${questionIndex}].Answers[${answerIndex}].IsCorrect">
-                        <label class="form-check-label">Poprawna</label>
-                    </div>
-                `;
+                        <input type="text" class="form-control" placeholder="Odpowiedź" name="questions[${questionIndex}].Answers[${answerIndex}].Text" required>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="questions[${questionIndex}].Answers[${answerIndex}].IsCorrect">
+                            <label class="form-check-label">Poprawna</label>
+                        </div>
+                    `;
 
             answerContainer.appendChild(answerDiv);
         });
     });
 
-    </script>
+</script>
