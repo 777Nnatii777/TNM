@@ -29,10 +29,12 @@
                 <button type="submit" class="btn btn-success">Zapisz Test</button>
             </div>
 
+            <div id="questionContainer" class="mt-4"></div>   <!--To tak musi być żeby do pay load ASP przekazywalo mi dynamicznie generowany formularz, nie pytaj javascript  -->
+            
+
         </form>
 
-        <div id="questionContainer" class="mt-4">
-        </div>
+        
     }
     else
     {
@@ -59,7 +61,7 @@
                 <h5>Pytanie ${questionIndex + 1}</h5>
                 <div class="mb-3">
                     <label for="questions_${questionIndex}_Text" class="form-label">Tytuł pytania:</label>
-                    <input type="text" class="form-control" id="questions_${questionIndex}_Text" name="questions[${questionIndex}].Text" required>
+                        <input type="text" class="form-control" id="questions_${questionIndex}_Text" name="questions[${questionIndex}].QuestionTitle" required>
                 </div>
                 <div class="mb-3">
                     <label for="questions_${questionIndex}_Type" class="form-label">Typ pytania:</label>

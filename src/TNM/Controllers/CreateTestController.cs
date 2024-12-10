@@ -54,9 +54,9 @@ namespace TNM.Controllers
         }
 
         private string test;
+        
         [HttpPost]
-        public async Task<IActionResult> CreateTest(string testname, string testdescription)
-
+        public async Task<IActionResult> CreateTest(string testname, string testdescription, List<Question> questions)
         {
             if (!ModelState.IsValid)
             {
@@ -65,50 +65,77 @@ namespace TNM.Controllers
                 return View("Index");
             }
 
-
             var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
 
             if (string.IsNullOrEmpty(userID))
             {
                 Console.WriteLine("UserID is null or empty.");
             }
+
+           
+            Console.WriteLine($"Test Name: {testname}");
+            Console.WriteLine($"Test Description: {testdescription}");
+
+            
+            
+                if (questions == null)
+                {
+                    Console.WriteLine("Questions is null.");
+                }
+                else if (!questions.Any())
+                {
+                    Console.WriteLine("Questions list is empty.");
+                }
+                else
+                {
+                    foreach (var question in questions)
+                    {
+                        Console.WriteLine($"Question Title: {question.QuestionTitle}");
+                        Console.WriteLine($"Question Type: {question.Type}");
+
+
+
+                        if (question.Answers != null)
+                        {
+                            foreach (var answer in question.Answers)
+                            {
+                                Console.WriteLine($"Answer: {answer.Text}, IsCorrect: {answer.IsCorrect}");
+                            }
+                        }
+                    }
+                }
+            
             
 
             var accessCode = await GenerateAccessCode();
 
             var newTest = new Test()
             {
-
                 Title = testname,
                 Description = testdescription,
                 CreatedAt = DateTime.Now,
                 TestStatus = "New",
                 UserId = userID,
-                AccessCode = accessCode
-               
-
+                AccessCode = accessCode,
+                Questions = questions // Przypisanie pytań do testu
             };
-            Console.WriteLine($"Title: {testname}, Description: {testdescription}");
 
             try
             {
                 _dbContext.Tests.Add(newTest);
                 var result = await _dbContext.SaveChangesAsync();
                 Console.WriteLine($"Rows affected: {result}");
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during SaveChanges: {ex.Message}");
             }
 
-
             return RedirectToAction("Index");
         }
-        
-       
-       
+
+
+
+
     }
 }
