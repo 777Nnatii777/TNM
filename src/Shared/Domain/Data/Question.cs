@@ -6,14 +6,16 @@ namespace Domain.Data
     {
         public int Id { get; set; }
 
-        public string QuestionTitle { get; set; } = string.Empty;
-        public string Text { get; set; }  
+        public string QuestionTitle { get; set; } = string.Empty; 
+        public string? Text { get; set; } 
         public QuestionType Type { get; set; } 
+
         public int TestId { get; set; }  
-        public Test Test { get; set; }  
-       
-        public List<Answer> Answers { get; set; } = new List<Answer>();
+        public Test? Test { get; set; }  
+
+        public List<Answer>? Answers { get; set; } = new List<Answer>(); 
     }
+
 
     public enum QuestionType
     {

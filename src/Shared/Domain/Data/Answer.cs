@@ -1,11 +1,18 @@
-﻿namespace Domain.Data
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+
+namespace Domain.Data
 {
     public class Answer
     {
         public int Id { get; set; }  
-        public string Text { get; set; } 
+        public string Text { get; set; }
+
+        [ValidateNever]
         public bool IsCorrect { get; set; }  
-        public int QuestionId { get; set; }  
+        public int QuestionId { get; set; }
+
+        [ValidateNever]
         public Question Question { get; set; }  
     }
 }

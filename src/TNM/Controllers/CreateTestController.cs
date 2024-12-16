@@ -47,69 +47,43 @@ namespace TNM.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult CreateTest()
-        {
-            return View("Index");
-        }
 
-        private string test;
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateTest(string testname, string testdescription, List<Question> questions)
         {
+            
+            foreach (var question in questions)
+            {
+                foreach (var answer in question.Answers)
+                {
+                    var key = $"questions[{questions.IndexOf(question)}].Answers[{question.Answers.IndexOf(answer)}].IsCorrect";
+                    if (ModelState.ContainsKey(key))
+                    {
+                        ModelState.Remove(key);
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 var modelStateErrors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                test = string.Join("; ", modelStateErrors);
+                Console.WriteLine("Model state invalid: " + string.Join(", ", modelStateErrors));
                 return View("Index");
             }
 
             var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (string.IsNullOrEmpty(userID))
             {
                 Console.WriteLine("UserID is null or empty.");
+                return RedirectToAction("Index");
             }
 
-           
             Console.WriteLine($"Test Name: {testname}");
             Console.WriteLine($"Test Description: {testdescription}");
 
-            
-            
-                if (questions == null)
-                {
-                    Console.WriteLine("Questions is null.");
-                }
-                else if (!questions.Any())
-                {
-                    Console.WriteLine("Questions list is empty.");
-                }
-                else
-                {
-                    foreach (var question in questions)
-                    {
-                        Console.WriteLine($"Question Title: {question.QuestionTitle}");
-                        Console.WriteLine($"Question Type: {question.Type}");
-
-
-
-                        if (question.Answers != null)
-                        {
-                            foreach (var answer in question.Answers)
-                            {
-                                Console.WriteLine($"Answer: {answer.Text}, IsCorrect: {answer.IsCorrect}");
-                            }
-                        }
-                    }
-                }
-            
-            
-
             var accessCode = await GenerateAccessCode();
-
-            var newTest = new Test()
+            var newTest = new Test
             {
                 Title = testname,
                 Description = testdescription,
@@ -117,22 +91,48 @@ namespace TNM.Controllers
                 TestStatus = "New",
                 UserId = userID,
                 AccessCode = accessCode,
-                Questions = questions // Przypisanie pytań do testu
+                Questions = new List<Question>()
             };
+
+            if (questions != null && questions.Any())
+            {
+                foreach (var question in questions)
+                {
+                    question.Test = newTest;
+
+                    if (question.Answers != null && question.Answers.Any())
+                    {
+                        foreach (var answer in question.Answers)
+                        {
+                            
+                            var isCorrectValue = Request.Form[$"questions[{questions.IndexOf(question)}].Answers[{question.Answers.IndexOf(answer)}].IsCorrect"];
+                            answer.IsCorrect = !string.IsNullOrEmpty(isCorrectValue) && isCorrectValue == "on";
+                            answer.Question = question; 
+
+                            Console.WriteLine($"Answer Text: {answer.Text}, IsCorrect: {answer.IsCorrect}");
+                        }
+                    }
+
+                    newTest.Questions.Add(question);
+                }
+            }
 
             try
             {
                 _dbContext.Tests.Add(newTest);
-                var result = await _dbContext.SaveChangesAsync();
-                Console.WriteLine($"Rows affected: {result}");
+                await _dbContext.SaveChangesAsync();
+                Console.WriteLine("Test saved successfully.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during SaveChanges: {ex.Message}");
+                return View("Index");
             }
 
             return RedirectToAction("Index");
         }
+
+
 
 
 

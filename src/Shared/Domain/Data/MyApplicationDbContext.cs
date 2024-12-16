@@ -40,6 +40,11 @@ namespace Domain.Data
             modelBuilder.Entity<Question>()
                 .Property(q => q.Type)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<Answer>()
+       .Property(a => a.IsCorrect)
+       .HasConversion<int>() 
+       .IsRequired(); 
         }
     }
 }
