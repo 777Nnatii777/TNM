@@ -2,9 +2,10 @@
 
 @{
     ViewData["Title"] = "My Tests";
-    var myTests = ViewBag.MyTests as List<Domain.Data.TestAssignment>;
-    var doneTests = ViewBag.DoneTests as List<Domain.Data.TestAssignment>;
-    var newTests = ViewBag.NewTests as List<Domain.Data.Test>;
+    var myTests = ViewBag.MyTests as List<Domain.Data.Test>;
+    var adedTests = ViewBag.AdedTests as List<Domain.Data.TestAdded>;
+    var doneTests = ViewBag.DoneTests as List<Domain.Data.Test>;
+
 }
 
 <div class="container mt-4">
@@ -13,70 +14,135 @@
 
     @if (User.Identity.IsAuthenticated)
     {
-       
-        <div class="d-flex justify-content-around mb-4">
-            <button class="btn btn-outline-primary btn-lg" onclick="showMyTests()">My Test</button>
-            <button class="btn btn-outline-success btn-lg" onclick="showDoneTests()">Done Tests</button>
-            <button class="btn btn-outline-info btn-lg" onclick="showNewTest()">New Test</button>
-        </div>
 
-        <div id="testContent" class="mt-4">
-            <p class="text-muted text-center">Wybierz przycisk, aby zobaczyć odpowiednie informacje o testach.</p>
-        </div>
+        @if (TempData["Error"] != null)
+        {
+                    <div class="alert alert-danger text-center">
+                @TempData["Error"]
+                    </div>
+        }
+
+        @if (adedTests != null && adedTests.Any())
+        {
+            @foreach (var test in adedTests)
+            {
+                Console.WriteLine($"Test ID: {test.Id}, Title: {test.Title}, User ID: {test.AdedUserId}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Lista adedTests jest pusta lub null.");
+        }
+
+            <div class="d-flex justify-content-around mb-4">
+                <button class="btn btn-outline-primary btn-lg" onclick="showMyTests()">My Created Tests</button>
+                <button class="btn btn-outline-success btn-lg" onclick="showAdedTests()">My Aded Tests</button>
+                <button class="btn btn-outline-info btn-lg" onclick="showDoneTest()">My Done Tests</button>
+            </div>
+
+            <div id="testContent" class="mt-4">
+                <p class="text-muted text-center">Wybierz przycisk, aby zobaczyć odpowiednie informacje o testach.</p>
+            </div>
     }
     else
     {
 
-        <div class="text-center mt-5">
-            <h4>Musisz być zalogowany, aby dodawać testy</h4>
-            <p class="lead">Proszę zalogować się lub zarejestrować, aby uzyskać dostęp do tej strony.</p>
-            <a href="/Account/Login" class="btn btn-primary">Zaloguj się</a>
-            <a href="/Account/Register" class="btn btn-secondary">Zarejestruj się</a>
-        </div>
+            <div class="text-center mt-5">
+                <h4>Musisz być zalogowany, aby dodawać testy</h4>
+                <p class="lead">Proszę zalogować się lub zarejestrować, aby uzyskać dostęp do tej strony.</p>
+                <a href="/Account/Login" class="btn btn-primary">Zaloguj się</a>
+                <a href="/Account/Register" class="btn btn-secondary">Zarejestruj się</a>
+            </div>
     }
 </div>
 
 
 @if (User.Identity.IsAuthenticated)
 {
-    <script>
-        function showMyTests() {
-            let content = "<h4 class='text-center'>Twoje testy:</h4>";
-            content += "<ul class='list-group'>";
+
+        <script>
+            function showMyTests() {
+                let content = "<h4 class='text-center'>Twoje testy:</h4>";
+                content += "<ul class='list-group'>";
         @foreach (var test in myTests)
         {
             <text>
-                        content += `<li class='list-group-item'>@test.Test.Title</li>`;
+                                content += `<li class='list-group-item'>@test.Title</li>`;
             </text>
         }
-                content += "</ul>";
-            document.getElementById("testContent").innerHTML = content;
-        }
+                    content += "</ul>";
+                document.getElementById("testContent").innerHTML = content;
+            }
 
-        function showDoneTests() {
-            let content = "<h4 class='text-center'>Ukończone testy:</h4>";
-            content += "<ul class='list-group'>";
+            function showAdedTests() {
+    let content = `
+        <div class='text-center mb-3'>
+            <h4>Dodane Testy</h4>
+            <form asp-action="AddTestByCode" method="post">
+                <div class='input-group mt-3 mb-3' style='max-width: 400px; margin: 0 auto;'>
+                    <input type='text' name='accessCode' class='form-control' placeholder='Wpisz kod testu' required>
+                    <button type='submit' class='btn btn-primary'>Dodaj test</button>
+                </div>
+            </form>
+        </div>
+        <ul class='list-group'>`;
+
+    @if (adedTests == null || !adedTests.Any())
+    {
+        <text>
+            content += `<li class='list-group-item text-center'>Nie masz dodanych testów.</li>`;
+        </text>
+    }
+    else
+    {
+        @foreach (var test in adedTests)
+        {
+            <text>
+                content += `<li class='list-group-item'>@test.Title</li>`;
+            </text>
+        }
+    }
+
+    content += "</ul>";
+    document.getElementById("testContent").innerHTML = content;
+}
+
+
+
+            function addTestByCode() {
+                const testCode = document.getElementById('testCodeInput').value;
+
+                if (!testCode) {
+                    alert('Proszę wpisać kod testu.');
+                    return;
+                }
+                console.log(`Dodawanie testu z kodem: ${testCode}`);
+
+
+
+            }
+
+            function showDoneTest() {
+                let content = "<h4 class='text-center'>Nowe testy:</h4>";
+                content += "<ul class='list-group'>";
         @foreach (var test in doneTests)
         {
             <text>
-                        content += `<li class='list-group-item'>@test.Test.Title</li>`;
+                                content += `<li class='list-group-item'>@test.Title</li>`;
             </text>
         }
-                content += "</ul>";
-            document.getElementById("testContent").innerHTML = content;
-        }
+                    content += "</ul>";
+                document.getElementById("testContent").innerHTML = content;
+            }
 
-        function showNewTest() {
-            let content = "<h4 class='text-center'>Nowe testy:</h4>";
-            content += "<ul class='list-group'>";
-        @foreach (var test in newTests)
-        {
-            <text>
-                        content += `<li class='list-group-item'>@test.Title</li>`;
-            </text>
-        }
-                content += "</ul>";
-            document.getElementById("testContent").innerHTML = content;
-        }
-    </script>
+            setTimeout(() => {
+                const alert = document.querySelector('.alert');
+                if (alert) {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }
+            }, 5000);
+
+        </script>
 }

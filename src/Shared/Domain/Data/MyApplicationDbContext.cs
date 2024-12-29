@@ -14,7 +14,7 @@ namespace Domain.Data
 
         public DbSet<TestAssignment> TestAssignments { get; set; }
 
-
+        public DbSet<TestAdded> TestAddeds { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,7 +36,13 @@ namespace Domain.Data
                 .WithOne(a => a.Question)
                 .HasForeignKey(a => a.QuestionId);
 
-           
+            modelBuilder.Entity<TestAdded>()
+    .HasOne(ta => ta.Test)
+    .WithMany() 
+    .HasForeignKey(ta => ta.TestId)
+    .OnDelete(DeleteBehavior.Cascade); 
+
+
             modelBuilder.Entity<Question>()
                 .Property(q => q.Type)
                 .HasConversion<int>();
