@@ -61,18 +61,33 @@
 {
 
         <script>
-            function showMyTests() {
-                let content = "<h4 class='text-center'>Twoje testy:</h4>";
-                content += "<ul class='list-group'>";
+
+        function editTest(testId) {
+            window.location.href = `/MyTests/EditTest/${testId}`;
+        }
+
+
+        function showMyTests() {
+            let content = "<h4 class='text-center'>Twoje testy:</h4>";
+            content += "<ul class='list-group'>";
         @foreach (var test in myTests)
         {
             <text>
-                                content += `<li class='list-group-item'>@test.Title</li>`;
+                        content += `
+                        <li class='list-group-item d-flex justify-content-between align-items-center'>
+                            <span>@test.Title</span>
+                            <div>
+                                <button class='btn btn-warning btn-sm me-2' onclick="editTest('@test.Id')">Edit</button>
+                                <button class='btn btn-danger btn-sm me-2' onclick="deleteTest('@test.Id')">Delete</button>
+                                <button class='btn btn-info btn-sm' onclick="showTestCode('@test.AccessCode')">Show Code</button>
+                            </div>
+                        </li>`;
             </text>
         }
-                    content += "</ul>";
-                document.getElementById("testContent").innerHTML = content;
-            }
+                content += "</ul>";
+            document.getElementById("testContent").innerHTML = content;
+        }
+
 
             function showAdedTests() {
     let content = `
@@ -87,21 +102,28 @@
         </div>
         <ul class='list-group'>`;
 
-    @if (adedTests == null || !adedTests.Any())
-    {
-        <text>
-            content += `<li class='list-group-item text-center'>Nie masz dodanych testów.</li>`;
-        </text>
-    }
-    else
-    {
-        @foreach (var test in adedTests)
+        @if (adedTests == null || !adedTests.Any())
         {
             <text>
-                content += `<li class='list-group-item'>@test.Title</li>`;
+                        content += `<li class='list-group-item text-center'>Nie masz dodanych testów.</li>`;
             </text>
         }
-    }
+        else
+        {
+            @foreach (var test in adedTests)
+            {
+                <text>
+                            content += `
+                            <li class='list-group-item d-flex justify-content-between align-items-center'>
+                                <span>@test.Title</span>
+                                <div>
+                                    <button class='btn btn-primary btn-sm me-2' onclick="startTest('@test.Id')">Start</button>
+                                    <button class='btn btn-danger btn-sm' onclick="deleteTest('@test.Id')">Delete</button>
+                                </div>
+                            </li>`;
+                </text>
+            }
+        }
 
     content += "</ul>";
     document.getElementById("testContent").innerHTML = content;
@@ -122,18 +144,26 @@
 
             }
 
-            function showDoneTest() {
-                let content = "<h4 class='text-center'>Nowe testy:</h4>";
-                content += "<ul class='list-group'>";
+        function showDoneTest() {
+            let content = "<h4 class='text-center'>Ukończone testy:</h4>";
+            content += "<ul class='list-group'>";
         @foreach (var test in doneTests)
         {
             <text>
-                                content += `<li class='list-group-item'>@test.Title</li>`;
+                        content += `
+                        <li class='list-group-item d-flex justify-content-between align-items-center'>
+                            <span>@test.Title</span>
+                            <div>
+                                <button class='btn btn-info btn-sm me-2' onclick="showTestDetails('@test.Id')">Show</button>
+                                <button class='btn btn-danger btn-sm' onclick="deleteTest('@test.Id')">Delete</button>
+                            </div>
+                        </li>`;
             </text>
         }
-                    content += "</ul>";
-                document.getElementById("testContent").innerHTML = content;
-            }
+                content += "</ul>";
+            document.getElementById("testContent").innerHTML = content;
+        }
+
 
             setTimeout(() => {
                 const alert = document.querySelector('.alert');

@@ -1,0 +1,89 @@
+﻿@model Domain.Data.Test
+
+@{
+    ViewData["Title"] = "Edit Test";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Edytuj Test</h2>
+    <form asp-controller="EditTest" asp-action="EditTest" method="post">
+
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <input type="hidden" name="UserId" value="@Model.UserId" />
+        <input type="hidden" name="AccessCode" value="@Model.AccessCode" />
+        <input type="hidden" name="TestStatus" value="@Model.TestStatus" />
+
+        
+        <div class="mb-3">
+            <label for="Title" class="form-label">Nazwa testu:</label>
+            <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" required>
+        </div>
+        <div class="mb-3">
+            <label for="Description" class="form-label">Opis Testu:</label>
+            <textarea class="form-control" id="Description" name="Description" rows="3" required>@Model.Description</textarea>
+        </div>
+        <div id="questionContainer">
+            @foreach (var question in Model.Questions)
+            {
+                <div class="mb-4 border p-3">
+                    <h5>Pytanie</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Tytuł pytania:</label>
+                        <input type="text" class="form-control" name="Questions[@question.Id].Text" value="@question.QuestionTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Typ pytania:</label>
+                        <select id="typeSelect_@question.Id" class="form-select" name="Questions[@question.Id].Type" required>
+                           
+                        </select>
+                    </div>
+                    <div>
+                        <h6>Odpowiedzi</h6>
+                        @foreach (var answer in question.Answers)
+                        {
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="text" class="form-control" name="Questions[@question.Id].Answers[@answer.Id].Text" value="@answer.Text" required>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="Questions[@question.Id].Answers[@answer.Id].IsCorrect" @(answer.IsCorrect ? "checked" : "")>
+                                    <label class="form-check-label">Poprawna</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    
+    const questions = @Html.Raw(Json.Serialize(Model.Questions.Select(q => new
+        {
+            id = q.Id,
+            type = q.Type.ToString(),
+        })));
+
+    const options = [
+        { value: "SingleChoice", text: "Jednokrotny wybór" },
+        { value: "MultipleChoice", text: "Wielokrotny wybór" },
+        { value: "TrueFalse", text: "Prawda/Fałsz" },
+    ];
+
+    questions.forEach(question => {
+        const selectElement = document.getElementById(`typeSelect_${question.id}`);
+        options.forEach(opt => {
+            const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (opt.value === question.type) {
+                option.selected = true;
+            }
+            selectElement.appendChild(option);
+        });
+    });
+</script>

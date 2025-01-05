@@ -87,5 +87,19 @@ public class MyTestsController : Controller
         return RedirectToAction("Index");
     }
 
+    public async Task<IActionResult> EditTest(int id)
+    {
+        var test = await _context.Tests
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
+        if (test == null)
+        {
+            TempData["Error"] = "Nie znaleziono testu.";
+            return RedirectToAction("Index");
+        }
+
+        return View(test); 
+    }
 }
