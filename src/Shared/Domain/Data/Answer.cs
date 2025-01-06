@@ -9,7 +9,7 @@ namespace Domain.Data
         public string Text { get; set; }
 
         [ValidateNever]
-        public bool IsCorrect { get; set; }  
+        public bool IsCorrect { get; set; } = false;
         public int QuestionId { get; set; }
 
         [ValidateNever]

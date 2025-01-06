@@ -17,7 +17,7 @@ public class MyTestsController : Controller
     public async Task<IActionResult> Index()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        Console.WriteLine($"Identyfikator uzytkownika odczytany przy myaddedtests: {userId} ");
+        
         var myTests = await _context.Tests
             
             .Where(t => t.UserId == userId)
@@ -27,10 +27,7 @@ public class MyTestsController : Controller
             
             .Where(ta => ta.AdedUserId == userId)
             .ToListAsync();
-        foreach (var test in adedTests)
-        {
-            Console.WriteLine($"Test ID: {test.Id}, Title: {test.Title}, User ID: {test.AdedUserId}");
-        }
+       
 
         var doneTests = await _context.Tests
             .Where(t => t.UserId == userId && t.TestStatus == "New")

@@ -11,112 +11,107 @@ public class EditTestController : Controller
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> EditTest(int id)
-    {
-        var test = await _context.Tests
-            .Include(t => t.Questions)
-            .ThenInclude(q => q.Answers)
-            .FirstOrDefaultAsync(t => t.Id == id);
-
-        if (test == null)
-        {
-            TempData["Error"] = "Nie znaleziono testu.";
-            return RedirectToAction("Index");
-        }
-
-        return View("~/Views/MyTests/EditTest.cshtml", test); 
-    }
 
     [HttpPost]
-    public async Task<IActionResult> EditTest(Test model)
+    public async Task<IActionResult> SaveTest(Test model)
     {
-        Console.WriteLine("EditTest POST triggered.");
-        Console.WriteLine($"Model ID: {model.Id}");
-        Console.WriteLine($"Model Title: {model.Title}");
-        Console.WriteLine($"Model Description: {model.Description}");
-
         if (!ModelState.IsValid)
         {
-            Console.WriteLine("ModelState is invalid.");
-            foreach (var error in ModelState)
+            foreach (var state in ModelState)
             {
-                Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
-            }
-            TempData["Error"] = "Niepoprawne dane formularza.";
-            return View("~/Views/MyTests/EditTest.cshtml", model);
-        }
-
-        var test = await _context.Tests
-            .Include(t => t.Questions)
-            .ThenInclude(q => q.Answers)
-            .FirstOrDefaultAsync(t => t.Id == model.Id);
-
-        if (test == null)
-        {
-            Console.WriteLine("Nie znaleziono testu w bazie danych.");
-            TempData["Error"] = "Nie znaleziono testu.";
-            return RedirectToAction("Index");
-        }
-
-        
-        test.Title = model.Title;
-        test.Description = model.Description;
-
-        foreach (var question in model.Questions)
-        {
-            var existingQuestion = test.Questions.FirstOrDefault(q => q.Id == question.Id);
-
-            if (existingQuestion != null)
-            {
-                existingQuestion.QuestionTitle = question.QuestionTitle;
-                existingQuestion.Type = question.Type;
-
-                foreach (var answer in question.Answers)
+                foreach (var error in state.Value.Errors)
                 {
-                    var existingAnswer = existingQuestion.Answers.FirstOrDefault(a => a.Id == answer.Id);
-
-                    if (existingAnswer != null)
-                    {
-                        existingAnswer.Text = answer.Text;
-                        existingAnswer.IsCorrect = answer.IsCorrect;
-                    }
-                    else
-                    {
-                        existingQuestion.Answers.Add(new Answer
-                        {
-                            Text = answer.Text,
-                            IsCorrect = answer.IsCorrect,
-                            QuestionId = existingQuestion.Id
-                        });
-                    }
+                    Console.WriteLine($"Key: {state.Key}, Error: {error.ErrorMessage}");
                 }
             }
-            else
-            {
-                test.Questions.Add(new Question
-                {
-                    QuestionTitle = question.QuestionTitle,
-                    Type = question.Type,
-                    Answers = question.Answers
-                });
-            }
+            return RedirectToAction("Index", "MyTests");
         }
 
         try
         {
-            _context.Tests.Update(test);
+            var existingTest = await _context.Tests
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(t => t.Id == model.Id);
+
+            if (existingTest == null)
+            {
+                Console.WriteLine("zwraca ze nei znajduje testu do pobrania orginału");
+                return NotFound("Test not found");
+            }
+
+            
+            existingTest.Title = model.Title;
+            existingTest.Description = model.Description;
+
+            foreach (var question in model.Questions)
+            {
+                var existingQuestion = existingTest.Questions.FirstOrDefault(q => q.Id == question.Id);
+
+                if (existingQuestion != null)
+                {
+                    
+                    existingQuestion.QuestionTitle = question.QuestionTitle;
+                    existingQuestion.Type = question.Type;
+
+                    foreach (var answer in question.Answers)
+                    {
+                        var existingAnswer = existingQuestion.Answers.FirstOrDefault(a => a.Id == answer.Id);
+
+                        if (existingAnswer != null)
+                        {
+                            Console.WriteLine($"Aktualizacja odpowiedzi ID: {existingAnswer.Id}");
+                            Console.WriteLine($"Stare dane - Tekst: {existingAnswer.Text}, IsCorrect: {existingAnswer.IsCorrect}");
+                            Console.WriteLine($"Nowe dane - Tekst: {answer.Text}, IsCorrect: {answer.IsCorrect}");
+                            existingAnswer.Text = answer.Text;
+                            existingAnswer.IsCorrect = answer.IsCorrect;
+                            _context.Entry(existingAnswer).State = EntityState.Modified;
+                        }
+                        else
+                        {
+
+                            
+                            Console.WriteLine($"existingAnswer in null");
+                        }
+                    }
+
+                    
+                    var answersToRemove = existingQuestion.Answers
+                        .Where(ea => !question.Answers.Any(a => a.Id == ea.Id))
+                        .ToList();
+
+                    foreach (var answerToRemove in answersToRemove)
+                    {
+                        _context.Answers.Remove(answerToRemove);
+                    }
+                }
+                else
+                {
+                    
+                    existingTest.Questions.Add(new Question
+                    {
+                        QuestionTitle = question.QuestionTitle,
+                        Type = question.Type,
+                        Answers = question.Answers.Select(a => new Answer
+                        {
+                            Text = a.Text,
+                            IsCorrect = a.IsCorrect
+                        }).ToList()
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
-            Console.WriteLine("Zapisano zmiany w bazie danych.");
+            Console.WriteLine("Udało się zapisac aktualziaje testu");
+            return RedirectToAction("Index", "MyTests");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Błąd podczas zapisu: {ex.Message}");
-            TempData["Error"] = "Wystąpił problem podczas zapisu zmian.";
-            return View("~/Views/MyTests/EditTest.cshtml", model);
+            Console.WriteLine($"Error updating test: {ex.Message}");
+            return View("Error");
         }
-
-        return RedirectToAction("Index", "MyTests");
     }
+
+
 
 }
