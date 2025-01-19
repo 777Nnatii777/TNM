@@ -65,7 +65,7 @@ public class EditTestController : Controller
                             Console.WriteLine($"Nowe dane - Tekst: {answer.Text}, IsCorrect: {answer.IsCorrect}");
                             existingAnswer.Text = answer.Text;
                             existingAnswer.IsCorrect = answer.IsCorrect;
-                            _context.Entry(existingAnswer).State = EntityState.Modified;
+                            
                         }
                         else
                         {

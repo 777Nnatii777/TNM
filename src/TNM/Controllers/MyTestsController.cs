@@ -99,4 +99,21 @@ public class MyTestsController : Controller
 
         return View(test); 
     }
+
+
+    public async Task<IActionResult> ShowCodePage([FromQuery] string code)
+    {
+        Console.WriteLine("Akcja ShowCodePage została wywołana");
+        Console.WriteLine($"Code received: {code}");
+
+        if (string.IsNullOrEmpty(code))
+        {
+            TempData["Error"] = "Nie znaleziono kodu testu.";
+            return RedirectToAction("Index");
+        }
+
+        return View("ShowCodePage", code);
+    }
+
+
 }

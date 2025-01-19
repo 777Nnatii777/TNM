@@ -63,6 +63,13 @@
             window.location.href = `/MyTests/EditTest/${testId}`;
         }
 
+        function showCodePage(testAccessCode)
+        {
+            console.log(`wENT with code: ${testAccessCode}`);
+            window.location.href = `/MyTests/ShowCodePage?code=${testAccessCode}`;
+
+        }
+
 
         function showMyTests() {
             let content = "<h4 class='text-center'>Twoje testy:</h4>";
@@ -76,7 +83,7 @@
                             <div>
                                 <button class='btn btn-warning btn-sm me-2' onclick="editTest('@test.Id')">Edit</button>
                                 <button class='btn btn-danger btn-sm me-2' onclick="deleteTest('@test.Id')">Delete</button>
-                                <button class='btn btn-info btn-sm' onclick="showTestCode('@test.AccessCode')">Show Code</button>
+                                <button class='btn btn-info btn-sm' onclick="showCodePage('@test.AccessCode')">Show Code</button>
                             </div>
                         </li>`;
             </text>
