@@ -40,9 +40,12 @@ public class MyTestsController : Controller
 
         return View();
     }
+    
     [HttpPost]
     public async Task<IActionResult> AddTestByCode(string accessCode)
     {
+
+        Console.WriteLine("Kontroler myTestController i akcja AddTestByCode sie wykonuje");
         if (string.IsNullOrEmpty(accessCode))
         {
             Console.WriteLine("Kod dostępu jest pusty");
@@ -50,21 +53,16 @@ public class MyTestsController : Controller
         }
         else
         {
-            Console.WriteLine($"Odczytany kod testu w kontrolerze: { accessCode}");
+            Console.WriteLine($"Odczytany kod testu w kontrolerze: {accessCode}");
         }
-
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-       
 
         var test = await _context.Tests.FirstOrDefaultAsync(t => t.AccessCode == accessCode);
-
-
         if (test == null)
         {
             TempData["Error"] = "Nie znaleziono testu o podanym kodzie.";
             return RedirectToAction("Index");
         }
-
         var testAdded = new TestAdded
         {
             Title = test.Title,
@@ -76,10 +74,8 @@ public class MyTestsController : Controller
             TestStatus = test.TestStatus,
             TestId = test.Id
         };
-
         _context.TestAddeds.Add(testAdded);
         await _context.SaveChangesAsync();
-
         TempData["Success"] = "Test został pomyślnie dodany.";
         return RedirectToAction("Index");
     }
