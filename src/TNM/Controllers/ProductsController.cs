@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain.Data;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
-using System.Collections.Generic;
-
-namespace TNM.Controllers
+public class ProductsController : Controller
 {
-    public class ProductsController : Controller
-    {
-        public IActionResult List()
-        {
-            
-            var products = new List<Product>
-            {
-                new Product { Id = 1, Name = "Produkt 1", Price = 100.00m },
-                new Product { Id = 2, Name = "Produkt 2", Price = 150.50m },
-                new Product { Id = 3, Name = "Produkt 3", Price = 200.75m }
-            };
+    private readonly MyApplicationDbContext _context;
 
-            
-            return View(products);
-        }
+    public ProductsController(MyApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+
+        
+        var receivedTests = await _context.TestResults
+            .Include(tr => tr.Test) 
+            .Include(tr => tr.User) 
+            .Where(tr => tr.Test.UserId == userId && tr.UserId != userId) 
+            .ToListAsync();
+
+        ViewBag.ReceivedTests = receivedTests; 
+        return View();
     }
 }

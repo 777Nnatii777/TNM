@@ -1,0 +1,37 @@
+﻿@using Domain.Data
+
+@{
+    ViewData["Title"] = "Received Tests";
+    var receivedTests = ViewBag.ReceivedTests as List<TestResult>;
+}
+
+<h1 class="mb-4">Testy wykonane przez odbiorców</h1>
+
+@if (receivedTests != null && receivedTests.Any())
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Tytół</th>
+                <th>Wykonawca</th>
+                <th>Wynik</th>
+                <th>Data Wykonania</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in receivedTests)
+            {
+                <tr>
+                    <td>@result.Test.Title</td>
+                    <td>@result.User.UserName</td> 
+                    <td>@result.CorrectAnswers / @result.TotalQuestions</td> 
+                    <td>@result.CompletedAt.ToString("yyyy-MM-dd HH:mm")</td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nie Posiadasz Jeszcze Testów wykoannych przez innych uzytkowników</p>
+}
