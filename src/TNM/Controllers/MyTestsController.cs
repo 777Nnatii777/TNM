@@ -33,6 +33,15 @@ public class MyTestsController : Controller
             .Where(t => t.UserId == userId && t.TestStatus == "New")
             .ToListAsync();
 
+        
+
+        var doneuserTests = await _context.TestResults
+        .Include(tr => tr.Test) 
+        .Where(tr => tr.UserId == userId) 
+        .ToListAsync();
+
+        
+        ViewBag.DoneUserTests = doneuserTests;
         ViewBag.MyTests = myTests;
         ViewBag.AdedTests = adedTests;
         ViewBag.DoneTests = doneTests;
@@ -110,6 +119,72 @@ public class MyTestsController : Controller
 
         return View("ShowCodePage", code);
     }
+
+    public async Task<IActionResult> StartTest(int id)
+    {
+        
+        var test = await _context.Tests
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        
+        if (test == null)
+        {
+            return NotFound();
+        }
+
+        
+        
+        return View("StartTest", test);
+    }
+
+   
+
+
+    [HttpPost]
+    public async Task<IActionResult> SubmitAnswers(TestSubmissionDto submission)
+    {
+        var test = await _context.Tests
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefaultAsync(t => t.Id == submission.TestId);
+
+        if (test == null)
+        {
+            TempData["Error"] = "Nie znaleziono testu.";
+            return RedirectToAction("Index");
+        }
+
+        var correctAnswers = test.Questions
+            .SelectMany(q => q.Answers)
+            .Where(a => a.IsCorrect)
+            .Select(a => a.Id)
+            .ToList();
+
+        var correctCount = submission.SelectedAnswers
+            .Count(answerId => correctAnswers.Contains(answerId));
+
+        var totalQuestions = test.Questions.Count;
+
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var testResult = new TestResult
+        {
+            TestId = test.Id,
+            UserId = userId,
+            CorrectAnswers = correctCount,
+            TotalQuestions = totalQuestions,
+            CompletedAt = DateTime.Now
+        };
+
+        _context.TestResults.Add(testResult);
+        await _context.SaveChangesAsync();
+
+        TempData["Result"] = $"Poprawne odpowiedzi: {correctCount} z {totalQuestions}.";
+        return RedirectToAction("Index");
+    }
+
 
 
 }

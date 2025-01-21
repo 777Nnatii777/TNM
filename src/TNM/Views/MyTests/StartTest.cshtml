@@ -1,0 +1,26 @@
+﻿@model Domain.Data.Test
+
+<h1>@Model.Title</h1>
+<p>@Model.Description</p>
+
+<form asp-action="SubmitAnswers" method="post">
+    <input type="hidden" name="TestId" value="@Model.Id" />
+
+    @foreach (var question in Model.Questions)
+    {
+        <div class="question">
+            <h3>@question.QuestionTitle</h3>
+            <p>@question.Text</p>
+            <ul>
+                @foreach (var answer in question.Answers)
+                {
+                    <li>
+                        <input type="checkbox" name="SelectedAnswers" value="@answer.Id" id="answer-@answer.Id" />
+                        <label for="answer-@answer.Id">@answer.Text</label>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">Zatwierdź odpowiedzi</button>
+</form>

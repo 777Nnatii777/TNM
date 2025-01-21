@@ -16,6 +16,8 @@ namespace Domain.Data
 
         public DbSet<TestAdded> TestAddeds { get; set; }
 
+        public DbSet<TestResult> TestResults { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
