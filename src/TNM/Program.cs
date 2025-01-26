@@ -13,6 +13,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>()
 builder.Services.AddControllersWithViews();
 
 
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+
 
 
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");

@@ -139,7 +139,51 @@ public class MyTestsController : Controller
         return View("StartTest", test);
     }
 
-   
+    [HttpPost]
+    public async Task<IActionResult> DeleteTestAdded(int id)
+    {
+        
+        var testAdded = await _context.TestAddeds.FindAsync(id);
+
+        if (testAdded == null)
+        {
+            TempData["Error"] = "Nie znaleziono dodanego testu do usunięcia.";
+            return RedirectToAction("Index");
+        }
+
+        
+        _context.TestAddeds.Remove(testAdded);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Dodany test został pomyślnie usunięty.";
+        return RedirectToAction("Index");
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteTest(int id)
+    {
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        
+        var testToDelete = await _context.Tests
+            .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+
+        if (testToDelete == null)
+        {
+            TempData["Error"] = "Nie znaleziono testu do usunięcia lub nie masz do niego dostępu.";
+            return RedirectToAction("Index");
+        }
+
+       
+        _context.Tests.Remove(testToDelete);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Test został pomyślnie usunięty.";
+        return RedirectToAction("Index");
+    }
+
 
 
     [HttpPost]
